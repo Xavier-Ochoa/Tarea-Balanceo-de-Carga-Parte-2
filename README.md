@@ -6,10 +6,8 @@ Aplicación web con balanceo de carga, dos nodos Flask y replicación bidireccio
 
 ## 📁 Estructura del proyecto
 
-```
-<img width="293" height="263" alt="image" src="https://github.com/user-attachments/assets/76257823-fbf4-40a9-9dd2-382b9bf3ae9f" />
+<img width="293" height="263" alt="image" src="https://github.com/user-attachments/assets/24f5981e-6907-443c-9ee3-069d884ae889" />
 
-```
 
 ---
 
