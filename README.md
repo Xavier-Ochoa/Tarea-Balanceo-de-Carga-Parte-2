@@ -142,16 +142,6 @@ Verifica: `Slave_IO_Running: Yes` y `Slave_SQL_Running: Yes`
 
 ---
 
-## ✏️ Cómo modificar el HTML
-
-1. Edita `templates/index.html`
-2. Reconstruye solo los nodos:
-```powershell
-docker-compose up -d --build nodo1 nodo2
-```
-
----
-
 ## ⚠️ Orden correcto siempre
 
 1. `docker-compose down -v` — limpiar
@@ -168,15 +158,24 @@ docker-compose up -d --build nodo1 nodo2
 Ejecuta `docker ps` y toma captura mostrando los 6 contenedores activos:
 `Maestro`, `Esclavo`, `nodo1`, `nodo2`, `nginx_balancer`, `phpmyadmin`
 
+<img width="793" height="411" alt="image" src="https://github.com/user-attachments/assets/cf9a7a4d-9587-4346-bbbc-2ec622365511" />
+
+
+
 ### 2. Base de datos Maestro
 En phpMyAdmin conectado al Maestro (`mysql_master`):
 - Captura de la tabla `peliculas` con los registros insertados
 - Captura del resultado de `SHOW SLAVE STATUS` mostrando `Slave_IO_Running: Yes` y `Slave_SQL_Running: Yes`
+<img width="1365" height="630" alt="image" src="https://github.com/user-attachments/assets/b65e6948-42c4-4c3c-825a-aeaca6841493" />
+
 
 ### 3. Base de datos Esclavo
 En phpMyAdmin conectado al Esclavo (`mysql_slave`):
 - Captura de la tabla `peliculas` con los mismos registros replicados
 - Captura del resultado de `SHOW SLAVE STATUS` mostrando `Slave_IO_Running: Yes` y `Slave_SQL_Running: Yes`
+
+<img width="1365" height="634" alt="image" src="https://github.com/user-attachments/assets/823ac462-5e9e-4224-84de-48278ffb3d60" />
+
 
 ### 4. Aplicación web — Nodo 1
 Abre `http://localhost` y toma captura mostrando:
@@ -188,10 +187,15 @@ Recarga la página y toma captura mostrando:
 - El badge superior indicando **Nodo 2** y **mysql_slave**
 - La tabla con los mismos registros
 
+<img width="1365" height="726" alt="image" src="https://github.com/user-attachments/assets/fed2ddaa-2e8e-45fa-83d7-9f55fa4a4cf6" />
+
+
+
 ### 6. Insertar un registro
 - Captura del formulario con los campos llenos
-- Captura del mensaje de confirmación `✅ Guardado en Nodo X`
+- Captura del mensaje de confirmación ` Guardado en Nodo X`
+<img width="571" height="630" alt="image" src="https://github.com/user-attachments/assets/83d93f7a-8e3f-430c-841e-96d10c0f16f4" />
 
-### 7. Verificar replicación bidireccional
-- Inserta un registro desde el Maestro en phpMyAdmin y toma captura del mismo registro apareciendo en el Esclavo
-- Repite al revés: inserta desde el Esclavo y muestra que aparece en el Maestro
+<img width="559" height="581" alt="image" src="https://github.com/user-attachments/assets/8c430217-37db-454f-a973-786dac714071" />
+
+
