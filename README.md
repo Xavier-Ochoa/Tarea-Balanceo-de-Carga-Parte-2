@@ -157,14 +157,13 @@ Ejecuta `docker ps` y toma captura mostrando los 6 contenedores activos:
 ### 2. Base de datos Maestro
 En phpMyAdmin conectado al Maestro (`mysql_master`):
 - Captura de la tabla `peliculas` con los registros insertados
-- Captura del resultado de `SHOW SLAVE STATUS` mostrando `Slave_IO_Running: Yes` y `Slave_SQL_Running: Yes`
 <img width="1365" height="630" alt="image" src="https://github.com/user-attachments/assets/b65e6948-42c4-4c3c-825a-aeaca6841493" />
 
 
 ### 3. Base de datos Esclavo
 En phpMyAdmin conectado al Esclavo (`mysql_slave`):
 - Captura de la tabla `peliculas` con los mismos registros replicados
-- Captura del resultado de `SHOW SLAVE STATUS` mostrando `Slave_IO_Running: Yes` y `Slave_SQL_Running: Yes`
+
 
 <img width="1365" height="634" alt="image" src="https://github.com/user-attachments/assets/823ac462-5e9e-4224-84de-48278ffb3d60" />
 
@@ -172,12 +171,11 @@ En phpMyAdmin conectado al Esclavo (`mysql_slave`):
 ### 4. Aplicación web — Nodo 1
 Abre `http://localhost` y toma captura mostrando:
 - El badge superior indicando **Nodo 1** y **mysql_master**
-- La tabla con los registros cargados
 
 ### 5. Aplicación web — Nodo 2
 Recarga la página y toma captura mostrando:
 - El badge superior indicando **Nodo 2** y **mysql_slave**
-- La tabla con los mismos registros
+
 
 <img width="1365" height="726" alt="image" src="https://github.com/user-attachments/assets/fed2ddaa-2e8e-45fa-83d7-9f55fa4a4cf6" />
 
