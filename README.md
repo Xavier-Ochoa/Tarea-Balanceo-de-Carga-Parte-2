@@ -7,14 +7,8 @@ Aplicación web con balanceo de carga, dos nodos Flask y replicación bidireccio
 ## 📁 Estructura del proyecto
 
 ```
-proyecto/
-├── docker-compose.yml       # Define todos los contenedores
-├── Dockerfile               # Construye la imagen de Flask
-├── app2.py                  # Código Python con Flask
-├── nginx/
-│   └── nginx.conf           # Configuración del balanceador
-└── templates/
-    └── index.html           # Interfaz web
+<img width="293" height="263" alt="image" src="https://github.com/user-attachments/assets/76257823-fbf4-40a9-9dd2-382b9bf3ae9f" />
+
 ```
 
 ---
