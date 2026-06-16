@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Películas</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #ffffff;
+      color: #1f2937;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: #1e3a8a;
+    }
+
+    .badge-nodo {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: #374151;
+    }
+
+    .badge-nodo span {
+      display: inline-block;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      margin: 0 0.3rem;
+      font-weight: 600;
+      color: #1e3a8a;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .card h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      color: #1e3a8a;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.4rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .form-grid input {
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+
+    .form-grid input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+
+    .btn {
+      grid-column: 1 / -1;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.7rem;
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn:hover {
+      background: #1d4ed8;
+    }
+
+    .msg {
+      grid-column: 1 / -1;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .msg.ok {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      display: block;
+    }
+
+    .msg.err {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    thead th {
+      background: #f1f5f9;
+      color: #1f2937;
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    tbody td {
+      padding: 0.65rem;
+    }
+
+    .tag {
+      background: #e0e7ff;
+      color: #1e3a8a;
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .loading {
+      text-align: center;
+      color: #6b7280;
+      padding: 2rem;
+    }
+
+    .error-box {
+      text-align: center;
+      color: #991b1b;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      padding: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Gestión de Películas</h1>
+
+<p class="badge-nodo">
+  Atendido por: <span>{{ nodo }}</span>
+  Base de datos: <span>{{ db }}</span>
+</p>
+
+<div class="card">
+  <h2>Registro de nueva película</h2>
+  <div class="form-grid">
+    <input type="text" id="titulo" placeholder="Título" required />
+    <input type="text" id="director" placeholder="Director" required />
+    <input type="number" id="anio" placeholder="Año" required />
+    <input type="text" id="genero" placeholder="Género" required />
+    <div class="msg" id="msg"></div>
+    <button class="btn" onclick="guardar()">Guardar</button>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Listado de películas registradas</h2>
+  <div id="tabla-wrapper">
+    <p class="loading">Cargando información...</p>
+  </div>
+</div>
+
+<script>
+async function cargarPeliculas() {
+  const wrapper = document.getElementById("tabla-wrapper");
+  try {
+    const res = await fetch("/api/peliculas");
+    const json = await res.json();
+
+    if (json.error) {
+      wrapper.innerHTML = `<p class="error-box">Error en base de datos: ${json.error}</p>`;
+      return;
+    }
+
+    const data = json.data;
+
+    if (!data || !Array.isArray(data) || !data.length) {
+      wrapper.innerHTML = "<p class='loading'>No existen registros.</p>";
+      return;
+    }
+
+    wrapper.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Director</th>
+            <th>Año</th>
+            <th>Género</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.map(p => `
+            <tr>
+              <td>${p.id}</td>
+              <td><strong>${p.titulo}</strong></td>
+              <td>${p.director || '—'}</td>
+              <td>${p.anio}</td>
+              <td><span class="tag">${p.genero}</span></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  } catch (e) {
+    wrapper.innerHTML = `<p class="error-box">Error de conexión: ${e.message}</p>`;
+  }
+}
+
+async function guardar() {
+  const titulo = tituloInput.value.trim();
+  const director = directorInput.value.trim();
+  const anio = anioInput.value.trim();
+  const genero = generoInput.value.trim();
+
+  if (!titulo || !director || !anio || !genero) {
+    mostrarMsg("err", "Todos los campos son obligatorios.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/agregar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ titulo, director, anio, genero })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      mostrarMsg("ok", `Registro almacenado correctamente en ${data.db}.`);
+      tituloInput.value = directorInput.value = anioInput.value = generoInput.value = "";
+      cargarPeliculas();
+    } else {
+      mostrarMsg("err", data.error);
+    }
+  } catch (e) {
+    mostrarMsg("err", e.message);
+  }
+}
+
+function mostrarMsg(tipo, texto) {
+  const msg = document.getElementById("msg");
+  msg.className = "msg " + (tipo === "ok" ? "ok" : "err");
+  msg.textContent = texto;
+  setTimeout(() => msg.className = "msg", 5000);
+}
+
+const tituloInput = document.getElementById("titulo");
+const directorInput = document.getElementById("director");
+const anioInput = document.getElementById("anio");
+const generoInput = document.getElementById("genero");
+
+cargarPeliculas();
+</script>
+
+</body>
+</html>
